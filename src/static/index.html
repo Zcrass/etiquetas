@@ -11,7 +11,11 @@
     <div class="upload-container">
         <h2>Carga la base de datos de etiquetas</h2>
         <form id="upload-form">
+            <p>Sube un archivo CSV, XLS o XLSX con las informacion para las etiquetas.</p>
             <input type="file" id="file-input" accept=".csv,.xls,.xlsx" required>
+            <br>
+            <p>Sube un archivo de configuración JSON que contenga los parámetros necesarios para la generación de etiquetas.</p>
+            <input type="file" id="file-config" accept=".json" required>
             <br>
             <button type="submit" class="upload-btn">Ejecutar</button>
         </form>
@@ -28,6 +32,7 @@
 
             const formData = new FormData();
             formData.append('file', file);
+            formData.append('config', document.getElementById('file-config').files[0]);
 
             const response = await fetch('/api/build_labels/', {
                 method: 'POST',

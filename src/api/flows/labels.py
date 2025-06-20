@@ -1,8 +1,10 @@
 __all__ = ["BuildLabels"]
 from copy import deepcopy
+import logging
 from logging import getLogger
 import math
 import re
+import sys
 
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -11,21 +13,21 @@ from api.models import BuildLabelsResponse
 
 logger = getLogger(__name__)
 logger.setLevel("DEBUG")
+if not logger.hasHandlers():
+    handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter(
+        "%(asctime)s %(levelname)s %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S"
+    )
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 class BuildLabels:
     """
     Class to build labels for flows.
     """
 
-    def __init__(self):
-        self.cfg = {
-            "columna_n_duplicados": "DUPLICADOS",
-            "n_etiquetas_por_hoja": 4,
-            "etiquetas_html_template": "/api_etiquetas/templates/ebum_liquenes.html",
-            "grid_html_template": "/api_etiquetas/templates/label_grid.html",
-            "css_template": "/api_etiquetas/templates/ebum.css",
-            "archivo_etiquetas": "etiquetas.html",
-        } 
+    def __init__(self, cfg: dict):
+        self.cfg = cfg
 
     def run(self, data: pd.DataFrame) -> list[str]:
         """
@@ -79,7 +81,8 @@ class BuildLabels:
         """
         Get the template for labels.
         """
-        with open(path, 'r') as file:
+        logger.info(f"Cargando template de etiquetas desde {path}")
+        with open(path, 'r', encoding="utf8") as file:
             template = file.read()
         return BeautifulSoup(template, 'html.parser')
 

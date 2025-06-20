@@ -9,17 +9,6 @@ from fastapi.staticfiles import StaticFiles
 from api.routers import labels
 
 
-logger = getLogger(__name__)
-
-if not logger.hasHandlers():
-    handler = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S"
-    )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -35,5 +24,4 @@ app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0", port=8000)
+    uvicorn.run(app, host="localhost", port=8000)
