@@ -1,3 +1,4 @@
+__all__ = ["BuildLabels"]
 from copy import deepcopy
 from logging import getLogger
 import math
@@ -5,6 +6,8 @@ import re
 
 from bs4 import BeautifulSoup
 import pandas as pd
+
+from api.models import BuildLabelsResponse
 
 logger = getLogger(__name__)
 logger.setLevel("DEBUG")
@@ -31,7 +34,7 @@ class BuildLabels:
         if data.empty:
             return_msg = "El archivo está vacío."
             raise ValueError(return_msg)
-        
+        errors = []
         logger.info(f"Total de datos en el archivo: {data.shape}")
         data = self._filter_labels_number(data)
         if data.empty:
@@ -52,7 +55,8 @@ class BuildLabels:
         labels = self._fill_template(data, labels_template)
         grid = self._fill_grid(labels, grid_template)
         self._save_labels(grid, self.cfg["grid_html_template"])
-        return self.cfg["archivo_etiquetas"]
+
+        return BuildLabelsResponse(labels=grid.prettify(), errors=errors)
 
     def _filter_labels_number(self, data: pd.DataFrame) -> pd.DataFrame:
         """

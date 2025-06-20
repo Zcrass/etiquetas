@@ -31,7 +31,6 @@ app.add_middleware(
 
 ### include routers
 app.include_router(labels.router, prefix="/api", tags=["build_labels"])
-# app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
