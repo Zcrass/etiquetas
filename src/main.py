@@ -31,8 +31,8 @@ if __name__ == "__main__":
     import os
     import uvicorn
     config_file = "cfg/api_config.json"
-    host = "localhost"
-    port = 8000
+    host = "0.0.0.0"
+    port = 10000
     
     if os.path.exists(config_file):
         api_config = json.load(open(config_file))
