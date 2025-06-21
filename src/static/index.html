@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Labels File</title>
+    <title>Generador de etiquetas EBUM</title>
     <link rel="stylesheet" href="index.css">
-    <style>
-    </style>
 </head>
 <body>
     <div class="upload-container">
@@ -23,16 +21,18 @@
     <script>
         const form = document.getElementById('upload-form');
         const fileInput = document.getElementById('file-input');
-        const htmlViewer = document.getElementById('html-viewer');
+        const fileConfig = document.getElementById('file-config');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const file = fileInput.files[0];
+            const config = fileConfig.files[0];
             if (!file) return;
+            if (!config) return;
 
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('config', document.getElementById('file-config').files[0]);
+            formData.append('config', config);
 
             const response = await fetch('/api/build_labels/', {
                 method: 'POST',
@@ -41,6 +41,9 @@
             const responseBody = await response.json();
             const errors = responseBody.errors;
             const labels = responseBody.labels;
+            if (errors && errors.length > 0) {
+                alert("Errores:\n" + errors.join("\n"));
+            }
             if (labels) {
                 const blob = new Blob([labels], { type: "text/html" });
                 const url = URL.createObjectURL(blob);
