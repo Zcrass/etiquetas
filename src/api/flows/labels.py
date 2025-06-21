@@ -14,15 +14,9 @@ import pandas as pd
 
 from api.models import BuildLabelsResponse
 
+
 logger = getLogger(__name__)
 logger.setLevel("DEBUG")
-if not logger.hasHandlers():
-    handler = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S"
-    )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
 
 
 class BuildLabels:
@@ -32,12 +26,12 @@ class BuildLabels:
 
     def __init__(self, cfg: dict):
         self.cfg = cfg
+        self.errors = []
 
     def run(self, data, file_path: str) -> list[str]:
         """
         Build labels for the flow.
         """
-        errors = []
         
         labels_template = self._get_template(self.cfg["etiquetas_html_template"])
         grid_template = self._get_template(self.cfg["grid_html_template"])
@@ -45,14 +39,13 @@ class BuildLabels:
 
         data = load_workbook(filename=BytesIO(data), rich_text=True)
         data = self._extract_format(data)
-        logger.info(data)
         data = self._validate_data(data)
         data = self._enumerate_labels(data)
         labels = self._fill_template(data, labels_template)
         grid = self._fill_grid(labels, grid_template)
-        self._save_labels(grid, self.cfg["grid_html_template"])
+        # self._save_labels(grid, self.cfg["grid_html_template"])
 
-        return BuildLabelsResponse(labels=grid.prettify(), errors=errors)
+        return BuildLabelsResponse(labels=grid.prettify(), errors=list(set(self.errors)))
 
     def _validate_data(self, data):
         logger.info(f"Total de datos en el archivo: {data.shape}")
@@ -60,6 +53,8 @@ class BuildLabels:
             return_msg = "El archivo está vacío."
             raise ValueError(return_msg)
         
+        data["_label_id"] = range(len(data))
+
         data = self._filter_labels_number(data)
         if data.empty:
             logger.info("No hay ejemplares con etiquetas.")
@@ -111,16 +106,14 @@ class BuildLabels:
             for cell in row:
             # Check if the entire cell is italicized
                 if cell.font.italic:
-                    print(f"Cell {cell.coordinate} is completely italicized: {cell.value}")
                     cell.value = f"<em>{cell.value}</em>"
             # cell.value will either be CellRichText or str, with CellRichText having more formatting that needs to be checked.
-                print(cell)
                 if isinstance(cell.value, CellRichText):
                     for text_block in cell.value:
                     # Ensure it's a text block not a plain string, and that it is in fact italicized
                         if isinstance(text_block, TextBlock) and text_block.font.italic:
-                            print(f"Cell {cell.coordinate} contains italicized text: {text_block.text}")
                             text_block.text = f"<em>{text_block.text}</em>"
+
         df = pd.DataFrame(list(sheet.values))
         df.columns = df.iloc[0]  
         df = df[1:]  
@@ -147,10 +140,13 @@ class BuildLabels:
         for column in data.index:
             replace_str = "#{" + column + "}#"
             html_str = html_str.replace(replace_str, str(data[column]))
+        
         pattern = r"#\{.*?\}#"
         matches = re.findall(pattern, html_str)
         if matches:
-            logger.warning(f"Columnas no reemplazadas: {matches}")
+            error_msg = f"Valores faltantes para el ejemplar {data._label_id}: {matches}"
+            self.errors.append(error_msg)
+            logger.warning(error_msg)
             for match in matches:
                 html_str = html_str.replace(match, "")
         return html_str

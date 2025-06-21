@@ -10,13 +10,7 @@ import api.models as models
 
 logger = getLogger(__name__)
 logger.setLevel("DEBUG")
-if not logger.hasHandlers():
-    handler = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S"
-    )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+
 
 router = APIRouter()
 
@@ -27,6 +21,7 @@ async def build_labels(file: UploadFile, config: UploadFile, response: Response)
     config = await config.read()
     config = config.decode('utf-8')
     config = json.loads(config)
+
     logger.info(f"Received file: {file.filename}, size: {len(content)} bytes")
     if not content:
         logger.error("File is empty.")

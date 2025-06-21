@@ -1,10 +1,16 @@
-from logging import getLogger
+import logging
+from logging import StreamHandler, Formatter
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from api.routers import labels
+
+handler = StreamHandler()
+handler.setFormatter(Formatter('%(asctime)s %(levelname)s %(name)s: %(message)s'))
+logging.basicConfig(level=logging.INFO, handlers=[handler])
+
 
 app = FastAPI()
 app.add_middleware(
