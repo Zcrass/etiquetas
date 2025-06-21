@@ -1,0 +1,7 @@
+{
+    "columna_n_duplicados": "DUPLICADOS",
+    "n_etiquetas_por_hoja": 4,
+    "etiquetas_html_template": "templates/ebum_liquenes.html",
+    "grid_html_template": "templates/label_grid.html",
+    "archivo_etiquetas": "etiquetas.html"
+}

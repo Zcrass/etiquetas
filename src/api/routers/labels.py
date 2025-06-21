@@ -1,12 +1,9 @@
-from io import BytesIO
 import logging
 from logging import getLogger
 import json
 import sys
 
-from fastapi import APIRouter, UploadFile, File, Response, status
-from fastapi.responses import JSONResponse
-import pandas as pd
+from fastapi import APIRouter, UploadFile, Response, status
 
 import api.flows as flows 
 import api.models as models
@@ -30,7 +27,7 @@ async def build_labels(file: UploadFile, config: UploadFile, response: Response)
     config = await config.read()
     config = config.decode('utf-8')
     config = json.loads(config)
-
+    logger.info(f"Received file: {file.filename}, size: {len(content)} bytes")
     if not content:
         logger.error("File is empty.")
         response.status_code = status.HTTP_400_BAD_REQUEST
@@ -42,11 +39,8 @@ async def build_labels(file: UploadFile, config: UploadFile, response: Response)
     
     if file.filename.endswith('.csv'):
         logger.warning("Processing CSV file. Format may not be handled correctly")
-        # logger.warning("Advertencia: El archivo es un CSV, puede que no se procese correctamente si tiene encabezados o formatos especiales.")
-        func = pd.read_csv
-    else:
-        func = pd.read_excel
-    df = func(BytesIO(content))
+
+    # df = func(BytesIO(content))
     builder = flows.BuildLabels(config)
-    labels = builder.run(data=df)
+    labels = builder.run(data=content, file_path=file.filename)
     return labels
