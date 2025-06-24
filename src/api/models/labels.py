@@ -1,4 +1,7 @@
-__all__ = ["BuildLabelsResponse"]
+__all__ = [
+    "BuildLabelsResponse",
+]
+from fastapi import UploadFile
 from pydantic import BaseModel
 
 

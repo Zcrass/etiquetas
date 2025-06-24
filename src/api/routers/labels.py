@@ -3,7 +3,7 @@ from logging import getLogger
 import json
 import sys
 
-from fastapi import APIRouter, UploadFile, Response, status
+from fastapi import APIRouter, UploadFile, Response, Form
 
 import api.flows as flows 
 import api.models as models
@@ -16,26 +16,32 @@ router = APIRouter()
 
 
 @router.post("/build_labels/", response_model=models.BuildLabelsResponse, status_code=200)
-async def build_labels(file: UploadFile, config: UploadFile, response: Response):
-    content = await file.read()
-    config = await config.read()
-    config = config.decode('utf-8')
-    config = json.loads(config)
+async def build_labels(
+    file: UploadFile, 
+    template: UploadFile, 
+    response: Response,
+    columna_n_duplicados: str = Form("DUPLICADOS"),
+    grid_template: UploadFile | None = None,
+    ):
 
-    logger.info(f"Received file: {file.filename}, size: {len(content)} bytes")
-    if not content:
-        logger.error("File is empty.")
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return models.BuildLabelsResponse(errors=["El archivo está vacío."])
-    if not file.filename.endswith(('.csv', '.xlsx', '.xls')):	
-        logger.error("File must be a CSV or Excel file.")
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return models.BuildLabelsResponse(errors=["El archivo debe ser un CSV o un archivo de Excel."]) 
-    
-    if file.filename.endswith('.csv'):
-        logger.warning("Processing CSV file. Format may not be handled correctly")
-
-    # df = func(BytesIO(content))
-    builder = flows.BuildLabels(config)
-    labels = builder.run(data=content, file_path=file.filename)
+    try:
+        logger.info(f"Duplicate column name {columna_n_duplicados}")
+        logger.info(f"Received file: {file.filename}, size: {file.size} bytes")
+        content = await file.read()
+        template = await template.read()
+        
+        if grid_template is None:
+            logger.info("Reading default grid template")
+            with open("label_grid.html", "r", encoding="utf8") as file:
+                grid_template = file.read()
+        else:
+            logger.info(f"Reading grid template from file {grid_template.filename}")
+            grid_template = await grid_template.read()
+            
+        builder = flows.BuildLabels(columna_n_duplicados, grid_template)
+        labels = builder.run(data=content, template=template)
+    except Exception as exc:
+        logger.error(f"Error during processing: {exc}")
+        response.status_code = 500
+        return models.BuildLabelsResponse(labels=None, errors=[str(exc)])
     return labels

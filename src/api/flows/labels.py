@@ -24,18 +24,19 @@ class BuildLabels:
     Class to build labels for flows.
     """
 
-    def __init__(self, cfg: dict):
-        self.cfg = cfg
+    def __init__(self, columna_n_duplicados: str, grid_template):
+        self.columna_n_duplicados = columna_n_duplicados
+        self.grid_template = BeautifulSoup(grid_template, "html.parser")
+        self.n_etiquetas_por_hoja = 4
         self.errors = []
 
-    def run(self, data, file_path: str) -> list[str]:
+    def run(self, data, template: str) -> list[str]:
         """
         Build labels for the flow.
         """
         
-        labels_template = self._get_template(self.cfg["etiquetas_html_template"])
-        grid_template = self._get_template(self.cfg["grid_html_template"])
-        grid_template = self._extend_styles(grid_template, labels_template)
+        labels_template = BeautifulSoup(template, "html.parser")
+        grid_template = self._extend_styles(self.grid_template, labels_template)
 
         data = load_workbook(filename=BytesIO(data), rich_text=True)
         data = self._extract_format(data)
@@ -43,7 +44,6 @@ class BuildLabels:
         data = self._enumerate_labels(data)
         labels = self._fill_template(data, labels_template)
         grid = self._fill_grid(labels, grid_template)
-        # self._save_labels(grid, self.cfg["grid_html_template"])
 
         return BuildLabelsResponse(labels=grid.prettify(), errors=list(set(self.errors)))
 
@@ -61,7 +61,7 @@ class BuildLabels:
             return_msg = f"""
                 No hay ejemplares con etiquetas. 
                 Se requiere al menos un duplicado para crear etiquetas. 
-                Asegurese que exista la columna '{self.cfg["columna_n_duplicados"]}' y que tenga al menos un valor mayor a cero.
+                Asegurese que exista la columna '{self.columna_n_duplicados}' y que tenga al menos un valor mayor a cero.
             """
             raise ValueError(return_msg)
         return data
@@ -70,7 +70,9 @@ class BuildLabels:
         """
         Filter specimens with at least one duplicate.
         """
-        column_name = self.cfg["columna_n_duplicados"]
+        column_name = self.columna_n_duplicados
+        if column_name not in data.columns:
+            raise ValueError(f"La columna {column_name} no se encuentra en el archivo")
         data = data.loc[data[column_name] > 0]
         logger.info(f"Creando etiquetas para {len(data)} ejemplares.")
         return data
@@ -79,18 +81,9 @@ class BuildLabels:
         """
         Enumerate total labels.
         """
-        data = data.reindex(data.index.repeat(data[self.cfg["columna_n_duplicados"]]))
+        data = data.reindex(data.index.repeat(data[self.columna_n_duplicados]))
         logger.info(f"Total de etiquetas por crear: {len(data)}")
         return data
-
-    def _get_template(self, path: str) -> str:
-        """
-        Get the template for labels.
-        """
-        logger.info(f"Cargando template de etiquetas desde {path}")
-        with open(path, "r", encoding="utf8") as file:
-            template = file.read()
-        return BeautifulSoup(template, "html.parser")
 
     def _extend_styles(self, grid: BeautifulSoup, labels: str) -> BeautifulSoup:
         """
@@ -117,6 +110,15 @@ class BuildLabels:
         df = pd.DataFrame(list(sheet.values))
         df.columns = df.iloc[0]  
         df = df[1:]  
+        new_col_names = []
+        for col_name in df.columns:
+            if isinstance(col_name, TextBlock):
+                col_name = col_name.text
+            elif isinstance(col_name, CellRichText):
+                col_name = str(col_name)
+            new_col_names.append(col_name)
+
+        df.columns = new_col_names
         df.columns = df.columns.str.replace("<em>", "")  
         df.columns = df.columns.str.replace("</em>", "")
         workbook.close()
@@ -157,7 +159,7 @@ class BuildLabels:
         """
         logger.info("Creando grid de etiquetas.")
         grid = deepcopy(grid_template)
-        n_pages = math.ceil(len(labels) / self.cfg["n_etiquetas_por_hoja"])
+        n_pages = math.ceil(len(labels) / self.n_etiquetas_por_hoja)
         logger.info(f"Total de páginas: {n_pages}")
         labels = [BeautifulSoup(label, "html.parser") for label in labels]
         grid.find("div", {"class": "label-grid"}).clear()
@@ -168,6 +170,6 @@ class BuildLabels:
         return grid
 
     def _save_labels(self, grid: BeautifulSoup, path: str) -> None:
-        with open(self.cfg["archivo_etiquetas"], "w", encoding="utf-8") as f:
+        with open(self.archivo_etiquetas, "w", encoding="utf-8") as f:
             f.write(grid.prettify())
-        logger.info(f"Etiquetas guardadas en {self.cfg['archivo_etiquetas']}")
+        logger.info(f"Etiquetas guardadas en {self.archivo_etiquetas}")
