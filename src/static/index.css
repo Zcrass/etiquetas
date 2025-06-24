@@ -1,5 +1,6 @@
 body {
-    background: #f4f4f4;
+    background: #3B4B37;
+    color: #F3F1C4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,17 +9,47 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.upload-container {
-    background: #fff;
+.container {
+    background: #636E54;
     padding: 2rem 3rem;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    font-size: small;
+}
+
+.left-column {
+    padding: 1em;
+    box-sizing: border-box;
+    width: 33%;
+}
+
+.right-column {
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+.options-btn {
+    background: #3B4B37;
+    color: #ffffff;
+    border: none;
+    padding: 0.3em 0.8rem;
+    border-radius: 5px;
+    font-size: 0.8em;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.options-btn:hover {
+    background: #232d21;
 }
 
 .upload-btn {
-    background: #0078d7;
-    color: #fff;
+    background: #3B4B37;
+    color: #ffffff;
     border: none;
     padding: 1rem 2rem;
     border-radius: 5px;
@@ -28,7 +59,7 @@ body {
 }
 
 .upload-btn:hover {
-    background: #005fa3;
+    background: #232d21;
 }
 
 #pdf-viewer {

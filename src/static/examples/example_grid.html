@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Herbarium Label Grid</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0px auto;
+            padding: 10px;
+            line-height: 1;
+        }
+
+        .label-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 0px;
+            box-sizing: border-box;
+            margin-bottom: 0px;
+        }
+
+        @page {
+            size: 216mm 279mm landscape;
+            margin: 0mm;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="label-grid">
+        #{CONTENT1}#
+        #{CONTENT2}#
+        #{CONTENT3}#
+        #{CONTENT4}#
+    </div>
+</body>
+
+</html>
