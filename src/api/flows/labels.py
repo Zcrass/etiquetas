@@ -40,7 +40,6 @@ class BuildLabels:
         grid_template = self._extend_styles(self.grid_template, labels_template)
         data = load_workbook(filename=BytesIO(data), rich_text=True)
         data = self._extract_format(data)
-        logger.info(f"types: \n{data.dtypes}")
         data = self._validate_data(data)
         data = self._enumerate_labels(data)
         labels = self._fill_template(data, labels_template)
