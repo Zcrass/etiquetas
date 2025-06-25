@@ -149,8 +149,10 @@ class BuildLabels:
 
             if isinstance(value, datetime):
                 value = format_datetime(value, self.date_format, locale="es")
+            if value is None:
+                value = ""
             
-            html_str = html_str.replace(replace_str, str(value))
+            html_str = html_str.replace(replace_str, str(value).strip())
         
         pattern = r"#\{.*?\}#"
         matches = re.findall(pattern, html_str)
