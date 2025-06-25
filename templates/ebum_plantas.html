@@ -9,7 +9,7 @@
         h2 {
             text-align: center;
             margin: 2px 0;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: normal;
         }
 
@@ -54,7 +54,6 @@
 
         .field-container {
             display: inline-block;
-            border-bottom: 1px solid #000000;
             border-radius: 0;
             margin-left: 6px;
             margin-top: 6px;
@@ -74,28 +73,26 @@
 <body>
     <div class="label-body">
         <div class="header">
-            <img src="https://ebum-etiquetas.onrender.com/img/escudo_universidad.png"
-                style="width: 33px; height: auto; float: right;">
-            <img src="https://ebum-etiquetas.onrender.com/img/escudo_herbario.jpg"
-                style="width: 33px; height: auto; float: left;">
+            <img src="https://ebum-etiquetas.onrender.com/img/escudo_universidad.png"style="width: 33px; height: auto; float: right;">
+            <img src="https://ebum-etiquetas.onrender.com/img/escudo_herbario.jpg" style="width: 33px; height: auto; float: left;">
             <h1>UNIVERSIDAD MICHOACANA DE SAN NICOLÁS DE HIDALGO</h1>
             <h2>HERBARIO DE LA FACULTAD DE BIOLOGÍA</h2>
-            <h2 style="font-weight: bold;">COLECCION DE LÍQUENES</h2>
+            <h2 style="font-weight: bold;">Plantas de México</h2>
         </div>
 
         <div class="field">
             <label class="field-name">NC:</label>
-            <span class="field-container" id="n_scient">#{NOMBRE CIENTIFICO/AUTOR/AÑO}#</span>
+            <span class="field-container" id="n_scient" style="border-bottom: 1px solid #000000;">#{nombre científico / autor}#</span>
         </div>
 
         <div class="section">
             <div class="field">
                 <label class="field-name">FAM:</label>
-                <span class="field-container" id="fam">#{FAMILIA}#</span>
+                <span class="field-container" id="fam">#{familia}#</span>
             </div>
             <div class="field">
                 <label class="field-name">Nc:</label>
-                <span class="field-container" id="n_com">#{NOMBRE-COMUN}#</span>
+                <span class="field-container" id="n_com">#{NOMBRE VULGAR}#</span>
             </div>
         </div>
 
@@ -107,59 +104,52 @@
         <div class="section">
             <div class="field">
                 <label class="field-name">MPIO:</label>
-                <span class="field-container" id="mpio">#{MUNICIPIO}#</span>
+                <span class="field-container" id="mpio" style="border-bottom: 1px solid #000000;">#{MUNICIPIO CORREGIDO}#</span>
             </div>
             <div class="field">
                 <label class="field-name">ESTADO:</label>
-                <span class="field-container" id="estado">#{ESTADO}#</span>
+                <span class="field-container" id="estado" style="border-bottom: 1px solid #000000;">#{ESTADO CORREGIDO}#</span>
             </div>
             <div class="field">
                 <label class="field-name">PAIS:</label>
-                <span class="field-container" id="pais">#{PAIS}#</span>
+                <span class="field-container" id="pais" style="border-bottom: 1px solid #000000;">#{PAIS}#</span>
             </div>
         </div>
 
         <div class="section">
             <div class="field">
                 <label class="field-name">ALT:</label>
-                <span class="field-container" id="alt">#{ALTITUD}#</span>
+                <span class="field-container" id="alt" style="border-bottom: 1px solid #000000;">#{ALTITUD}#</span>
             </div>
             <div class="field">
                 <label class="field-name">LAT:</label>
-                <span class="field-container" id="lat">#{LATITUD}#</span>
+                <span class="field-container" id="lat" style="border-bottom: 1px solid #000000;">#{LATITUD ACTUALIZADA}#</span>
             </div>
             <div class="field">
                 <label class="field-name">LONG:</label>
-                <span class="field-container" id="long">#{LONGITUD}#</span>
+                <span class="field-container" id="long" style="border-bottom: 1px solid #000000;">#{LONGITUD ACTUALIZADA}#</span>
             </div>
         </div>
 
-        <div class="section">
-            <div class="field">
-                <label class="field-name">HAB:</label>
-                <span class="field-container" id="hab">#{HABITAT}#</span>
-            </div>
-    
-            <div class="field">
-                <label class="field-name">F.B.:</label>
-                <span class="field-container" id="veg" style="border-bottom: none;">#{FORMA BIOL.}#</span>
-            </div>    
+        <div class="field">
+            <label class="field-name">HAB:</label>
+            <span class="field-container" id="hab" style="border-bottom: 1px solid #000000;">#{HABITAT}#</span>
         </div>
 
         <div class="field">
             <label class="field-name">VEG:</label>
-            <span class="field-container" id="asoc_veg" style="border-bottom: none;">#{TIPO DE VEGETACIÓN}#</span>
+            <span class="field-container" id="veg">#{TIPO DE VEGETACIÓN}#</span>
         </div>
 
         <div class="field">
             <label class="field-name">ASOC_VEG:</label>
-            <span class="field-container" id="asoc_veg" style="border-bottom: none;">#{ASOC-VEG}#</span>
+            <span class="field-container" id="asoc_veg">#{ASOCIACION}#</span>
         </div>
 
         <div class="section">
             <div class="field">
                 <label class="field-name">No. Col.:</label>
-                <span class="field-container" id="no_col">#{No. COLECTA}#</span>
+                <span class="field-container" id="no_col">#{No COLECTA}#</span>
             </div>
             <div class="field">
                 <label class="field-name">FECHA Col:</label>
@@ -169,19 +159,24 @@
 
         <div class="field">
             <label class="field-name">COL:</label>
-            <span class="field-container" id="col">#{COLECTOR}#</span>
-        </div>
-
-        <div class="field">
-            <label class="field-name">DET::</label>
-            <span class="field-container" id="fecha_col" style="border-bottom: none;">#{DETERMINADOR}#</span>
+            <span class="field-container" id="col">#{COLECTOR UNIFORMIZADO}#</span>
         </div>
 
         <div class="field">
             <label class="field-name">OBS:</label>
-            <span class="field-container" id="obs" style="border-bottom: none;">#{OBSERACIONES}#</span>
+            <span class="field-container" id="obs">#{OBSERVACIONES}#</span>
         </div>
 
+        <div class="section">
+            <div class="field">
+                <label class="field-name">F.B.:</label>
+                <span class="field-container" id="no_col">#{FORMA BIOL}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">DET::</label>
+                <span class="field-container" id="fecha_col">#{DETERMINADOR UNIFORMIZADO}#</span>
+            </div>
+        </div>
     </div>
 
 

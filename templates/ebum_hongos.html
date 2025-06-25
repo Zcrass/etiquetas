@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Herbarium Label EBUM - Liquenes</title>
+    <style>
+        h1,
+        h2 {
+            text-align: center;
+            margin: 2px 0;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .label-body {
+            font-family: Arial, sans-serif;
+            width: 126mm;
+            height: 85mm;
+            margin: 10px auto;
+            border: 3px solid black;
+            padding: 10px;
+            line-height: 1;
+        }
+
+        .header {
+            display: block;
+            width: 100%;
+            border: none;
+            border-bottom: 3px solid #000000;
+            border-radius: 0;
+            margin: 0;
+            padding: 0px;
+            background: #f8faff;
+            box-sizing: border-box;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+        }
+
+        .field {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .field-name {
+            flex: 0 0 auto;
+            margin-top: 6px;
+        }
+
+        .field-container {
+            display: inline-block;
+            border-radius: 0;
+            margin-left: 6px;
+            margin-top: 6px;
+            background: #f8faff;
+            font-size: small;
+            flex: 1 1 0;
+            width: 100%;
+            min-height: 10px;
+        }
+
+        .field label {
+            font-size: small;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="label-body">
+        <div class="header">
+            <img src="https://ebum-etiquetas.onrender.com/img/escudo_universidad.png"
+                style="width: 33px; height: auto; float: right;">
+            <img src="https://ebum-etiquetas.onrender.com/img/escudo_herbario.jpg"
+                style="width: 33px; height: auto; float: left;">
+            <h1>UNIVERSIDAD MICHOACANA DE SAN NICOLÁS DE HIDALGO</h1>
+            <h2>HERBARIO DE LA FACULTAD DE BIOLOGÍA</h2>
+            <h2>COLECCIÓN DE MACROMICETOS</h2>
+        </div>
+
+        <div class="field">
+            <label class="field-name">NC:</label>
+            <span class="field-container" id="n_scient">#{Nombre cientifico y autores}#</span>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Familia:</label>
+                <span class="field-container" id="fam">#{Familia}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Orden:</label>
+                <span class="field-container" id="n_com">#{Orden}#</span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="field-name">Localidad:</label>
+            <span class="field-container" id="loc">#{Localidad}#</span>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Coordenadas:</label>
+                <span class="field-container" id="alt">#{Latitud}# #{Longitud}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Altitud:</label>
+                <span class="field-container" id="lat">#{Altitud}#</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Tipo de vegetación:</label>
+                <span class="field-container" id="alt">#{Hábitat}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Hábitat:</label>
+                <span class="field-container" id="lat">#{Altitud}#</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Color:</label>
+                <span class="field-container" id="alt">#{Color}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Estípite:</label>
+                <span class="field-container" id="lat">#{Estípite}#</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Himenio:</label>
+                <span class="field-container" id="alt">#{Himenio}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Cambio de color:</label>
+                <span class="field-container" id="lat">#{Cambio de coloración al manipularse}#</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Esporada:</label>
+                <span class="field-container" id="mpio">#{Esporada}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Olor:</label>
+                <span class="field-container" id="estado">#{Olor}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Sabor:</label>
+                <span class="field-container" id="pais">#{Sabor}#</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="field">
+                <label class="field-name">Colector:</label>
+                <span class="field-container" id="mpio">#{Colector}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Nº colecta:</label>
+                <span class="field-container" id="estado">#{Número de colecta}#</span>
+            </div>
+            <div class="field">
+                <label class="field-name">Fecha:</label>
+                <span class="field-container" id="pais">#{Fecha de colecta}#</span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="field-name">Determinó:</label>
+            <span class="field-container" id="loc">#{Determino}#</span>
+        </div>
+
+        <div class="field">
+            <label class="field-name">Observaciones:</label>
+            <span class="field-container" id="loc">#{Observaciones}#</span>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
