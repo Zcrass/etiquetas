@@ -1,7 +1,4 @@
-import logging
 from logging import getLogger
-import json
-import sys
 
 from fastapi import APIRouter, UploadFile, Response, Form
 
@@ -21,12 +18,14 @@ async def build_labels(
     template: UploadFile, 
     response: Response,
     columna_n_duplicados: str = Form("DUPLICADOS"),
+    date_format: str = Form("dd-MM-yyyy"),
     grid_template: UploadFile | None = None,
     ):
 
     try:
-        logger.info(f"Duplicate column name {columna_n_duplicados}")
-        logger.info(f"Received file: {file.filename}, size: {file.size} bytes")
+        logger.debug(f"Duplicate column name {columna_n_duplicados}")
+        logger.debug(f"Date format {date_format}")
+        logger.debug(f"Received file: {file.filename}, size: {file.size} bytes")
         content = await file.read()
         template = await template.read()
         
@@ -38,7 +37,11 @@ async def build_labels(
             logger.info(f"Reading grid template from file {grid_template.filename}")
             grid_template = await grid_template.read()
             
-        builder = flows.BuildLabels(columna_n_duplicados, grid_template)
+        builder = flows.BuildLabels(
+            columna_n_duplicados=columna_n_duplicados, 
+            grid_template=grid_template, 
+            date_format=date_format
+        )
         labels = builder.run(data=content, template=template)
     except Exception as exc:
         logger.error(f"Error during processing: {exc}")

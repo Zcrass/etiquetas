@@ -1,14 +1,14 @@
 __all__ = ["BuildLabels"]
 from copy import deepcopy
 from io import BytesIO
-import logging
 from logging import getLogger
 import math
 import re
-import sys
 
+from babel.dates import format_datetime
 from bs4 import BeautifulSoup
-from openpyxl import load_workbook
+from datetime import datetime
+from openpyxl import load_workbook, Workbook
 from openpyxl.cell.rich_text import CellRichText, TextBlock
 import pandas as pd
 
@@ -24,9 +24,10 @@ class BuildLabels:
     Class to build labels for flows.
     """
 
-    def __init__(self, columna_n_duplicados: str, grid_template):
+    def __init__(self, columna_n_duplicados: str, grid_template: bytes, date_format: str):
         self.columna_n_duplicados = columna_n_duplicados
         self.grid_template = BeautifulSoup(grid_template, "html.parser")
+        self.date_format = date_format
         self.n_etiquetas_por_hoja = 4
         self.errors = []
 
@@ -37,9 +38,9 @@ class BuildLabels:
         
         labels_template = BeautifulSoup(template, "html.parser")
         grid_template = self._extend_styles(self.grid_template, labels_template)
-
         data = load_workbook(filename=BytesIO(data), rich_text=True)
         data = self._extract_format(data)
+        logger.info(f"types: \n{data.dtypes}")
         data = self._validate_data(data)
         data = self._enumerate_labels(data)
         labels = self._fill_template(data, labels_template)
@@ -57,13 +58,14 @@ class BuildLabels:
 
         data = self._filter_labels_number(data)
         if data.empty:
-            logger.info("No hay ejemplares con etiquetas.")
+            logger.warning("No hay ejemplares con etiquetas.")
             return_msg = f"""
                 No hay ejemplares con etiquetas. 
                 Se requiere al menos un duplicado para crear etiquetas. 
                 Asegurese que exista la columna '{self.columna_n_duplicados}' y que tenga al menos un valor mayor a cero.
             """
             raise ValueError(return_msg)
+        data.columns = data.columns.str.strip()
         return data
 
     def _filter_labels_number(self, data: pd.DataFrame) -> pd.DataFrame:
@@ -92,7 +94,7 @@ class BuildLabels:
         grid.find("style").extend(labels.find("style").contents)
         return grid
 
-    def _extract_format(self, workbook) -> pd.DataFrame:
+    def _extract_format(self, workbook: Workbook) -> pd.DataFrame:
         # The 'rich_text=True' parameter is required otherwise the cells are
         sheet = workbook.active
         for row in sheet.iter_rows():
@@ -140,8 +142,15 @@ class BuildLabels:
         """
         html_str = deepcopy(template).prettify()
         for column in data.index:
+            if column is None:
+                continue
             replace_str = "#{" + column + "}#"
-            html_str = html_str.replace(replace_str, str(data[column]))
+            value = data[column]
+
+            if isinstance(value, datetime):
+                value = format_datetime(value, self.date_format, locale="es")
+            
+            html_str = html_str.replace(replace_str, str(value))
         
         pattern = r"#\{.*?\}#"
         matches = re.findall(pattern, html_str)
@@ -172,4 +181,4 @@ class BuildLabels:
     def _save_labels(self, grid: BeautifulSoup, path: str) -> None:
         with open(self.archivo_etiquetas, "w", encoding="utf-8") as f:
             f.write(grid.prettify())
-        logger.info(f"Etiquetas guardadas en {self.archivo_etiquetas}")
+        logger.info(f"Etiquetas guardadas en {path}")
