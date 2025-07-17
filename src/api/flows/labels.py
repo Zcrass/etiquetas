@@ -150,6 +150,11 @@ class BuildLabels:
                 value = format_datetime(value, self.date_format, locale="es")
             if value is None:
                 value = ""
+            if isinstance(value, str):
+                value = value.strip()
+                if len(value) > 500:
+                    warn_msg = f"El valor de la columna '{column}' es demasiado largo para el ejemplar {data._label_id}"
+                    logger.warning(warn_msg)
             
             html_str = html_str.replace(replace_str, str(value).strip())
         
